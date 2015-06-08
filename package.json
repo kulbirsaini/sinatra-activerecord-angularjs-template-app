@@ -1,0 +1,22 @@
+{
+  "version": "0.0.1",
+  "private": true,
+  "name": "MyAngularApp",
+  "description": "An angular template with bootstrap",
+  "repository": "https://github.com/kulbirsaini/sinatra-activerecord-angularjs-template-app",
+  "license": "MIT",
+  "devDependencies": {
+    "bower": "^1.4.1",
+    "http-server": "^0.6.1",
+    "grunt": "^0.4.x",
+    "grunt-contrib-sass": "^0.9.x",
+    "grunt-contrib-watch": "^0.6.x",
+    "grunt-contrib-copy": "^0.8.x"
+  },
+  "scripts": {
+    "postinstall": "bower install",
+    "prestart": "npm install",
+    "start": "http-server -a 0.0.0.0 -p 3000",
+    "update-index-async": "nodejs -e \"require('shelljs/global'); sed('-i', /\\/\\/@@NG_LOADER_START@@[\\s\\S]*\\/\\/@@NG_LOADER_END@@/, '//@@NG_LOADER_START@@\\n' + cat('bower_components/angular-loader/angular-loader.min.js') + '\\n//@@NG_LOADER_END@@', 'app/index-async.html');\""
+  }
+}
