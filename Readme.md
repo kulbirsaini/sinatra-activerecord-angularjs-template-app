@@ -55,6 +55,11 @@ Available at [http://localhost:4567/](http://localhost:4567/)
 $ ./script/console
 ```
 
+###### Generate a new ActiveRecord model with migration
+
+```bash
+$ ./script/generate_model book name:string author:string amazon_url:string
+```
 
 ###### Run Angular App
 
