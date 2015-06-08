@@ -32,6 +32,57 @@ production:
 export APP_ENV=production
 ```
 
+## Rake Tasks
+
+```bash
+$ rake -T
+rake db:connect       # Connect to database
+rake db:create        # Create database
+rake db:drop          # Drop database
+rake db:fake_connect  # Establiish fake connection to database
+rake db:migrate       # Migrate database
+rake db:migrate:down  # One migration down
+rake db:migrate:up    # One migration up
+rake db:rollback      # Rollback migrations
+rake db:seed          # Seed database
+$
+```
+
+
+## Grunt Tasks
+
+
+###### Compile SCSS files
+
+```bash
+$ grunt sass
+```
+
+###### Copy bootstrap fonts to fonts directory
+
+```bash
+$ grunt copy
+```
+
+###### Watch SCSS files for changes
+
+```bash
+$ grunt watch
+```
+
+###### Do all the above three tasks
+
+```bash
+$ grunt
+Running "copy:main" (copy) task
+Copied 5 files
+
+Running "sass:dist" (sass) task
+
+Running "watch" task
+Waiting...
+```
+
 
 ## How To Run?
 

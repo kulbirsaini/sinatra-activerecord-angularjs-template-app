@@ -13,6 +13,8 @@ gem 'activerecord', require: 'active_record'
 gem 'jbuilder'
 # Rake tasks
 gem 'rake'
+# To compile scss files
+gem 'sass'
 # Replace with server of your choice
 gem 'thin'
 # For nicer output in console

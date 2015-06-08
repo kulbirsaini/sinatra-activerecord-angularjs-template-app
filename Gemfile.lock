@@ -49,6 +49,7 @@ GEM
       rack (>= 1.0)
     rake (10.4.2)
     rdiscount (2.1.8)
+    sass (3.4.14)
     sinatra (1.4.6)
       rack (~> 1.4)
       rack-protection (~> 1.4)
@@ -87,6 +88,7 @@ DEPENDENCIES
   jbuilder
   rake
   rdiscount
+  sass
   sinatra
   sinatra-contrib
   sqlite3
