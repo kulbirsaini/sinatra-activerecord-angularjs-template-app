@@ -49,6 +49,12 @@ $ ./script/server
 
 Available at [http://localhost:4567/](http://localhost:4567/)
 
+###### Ruby console with Sinatra environment
+
+```bash
+$ ./script/console
+```
+
 
 ###### Run Angular App
 
