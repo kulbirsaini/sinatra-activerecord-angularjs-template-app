@@ -1,5 +1,23 @@
 @import '../../../public/bower_components/bootstrap-sass/assets/stylesheets/_bootstrap';
 
+header {
+  background: #555;
+  a { color: #eee; }
+  a:hover, a:focus { color: #555; }
+  .navbar-brand { font-size: 20px; }
+  .navbar-brand:hover, .navbar-brand:focus { background: white; }
+
+  .navbar-toggle {
+    .icon-bar {
+      background: white;
+      display: block;
+      width: 22px;
+      height: 2px;
+      border-radius: 1px;
+    }
+  }
+}
+
 //@media (max-width: $screen-xs-max) { }
 //@media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) {}
 //@media (min-width: $screen-sm-min) and (max-width: $screen-sm-max) { }

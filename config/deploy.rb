@@ -38,6 +38,8 @@ namespace :deploy do
       within release_path do
         execute :bundle, "exec grunt copy"
         execute :bundle, "exec grunt sass"
+        execute :bundle, "exec grunt cssmin"
+        execute :bundle, "exec grunt uglify"
       end
     end
   end
