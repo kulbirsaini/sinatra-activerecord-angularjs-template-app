@@ -22,7 +22,10 @@ node_modules/
 npm-debug.log
 
 # Bower
-public/bower_components/
-public/assets/css/
-public/assets/fonts/
-public/assets/minjs/
+/public/bower_components/
+/public/assets/css/*
+!/public/assets/css/.keep
+/public/assets/fonts/*
+!/public/assets/fonts/.keep
+/public/assets/minjs/*
+!/public/assets/minjs/.keep
