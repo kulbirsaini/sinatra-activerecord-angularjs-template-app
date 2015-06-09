@@ -1,7 +1,7 @@
 class ApplicationController < Sinatra::Base
   configure :development do
     register Sinatra::Reloader
-    Dir.glob(SinatraApp::Application.root.join("app/models/*.rb")).each{ |f| also_reload f }
+    Dir.glob(SinatraApp::Application.models_dir.join("*.rb")).each{ |f| also_reload f }
   end
 
   before do

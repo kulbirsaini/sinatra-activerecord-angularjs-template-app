@@ -1,0 +1,115 @@
+#!/usr/bin/env ruby
+
+require File.expand_path('../../config/environment', __FILE__)
+
+def generate_migration(options = {})
+  if options[:skip_migration]
+    puts 'Skipping migration'
+    return
+  end
+  migration_name = 'Create' + options[:model].camelize.pluralize
+  table_name = options[:model].tableize
+  migration = ActiveRecord::Migrator.migrations(SinatraApp::Application.migrations_dir).select{ |m| m.name == migration_name }.first
+  raise "Migration already exists at #{SinatraApp::Application.root.join(migration.filename)}" if migration
+
+  filepath = SinatraApp::Application.migrations_dir.join(Time.now.utc.strftime('%Y%m%d%H%M%S') + '_create_' + table_name + '.rb')
+  puts "Generating migration file #{filepath}"
+
+  File.open(filepath, 'w') do |file|
+    file.write <<-MIGRATION
+class #{migration_name} < ActiveRecord::Migration
+  def change
+    create_table :#{table_name} do |t|
+      #{options[:fields].map{ |k, v| "t.#{v} :#{k}" }.join("\n      ")}
+
+      t.timestamps null: false
+    end
+  end
+end
+    MIGRATION
+  end
+end
+
+def generate_model(options = {})
+  if options[:skip_model]
+    puts 'Skipping model'
+    return
+  end
+  filepath = SinatraApp::Application.models_dir.join(options[:model].downcase.singularize + '.rb')
+
+  puts "Generating model #{filepath}"
+  raise "Model already exists at #{filepath}" if File.exists?(filepath) && !options[:force]
+
+  File.open(filepath, 'w') do |file|
+    file.write <<-MODEL.strip_heredoc
+      class #{options[:model].camelize} < ActiveRecord::Base
+      end
+    MODEL
+  end
+end
+
+def generate_controller(options = {})
+  if options[:skip_controller]
+    puts 'Skipping controller'
+    return
+  end
+  filepath = SinatraApp::Application.controllers_dir.join(options[:model].downcase.pluralize + '_controller.rb')
+
+  puts "Generating controller #{filepath}"
+  raise "Controller already exists at #{filepath}" if File.exists?(filepath) && !options[:force]
+
+  File.open(filepath, 'w') do |file|
+    file.write <<-CONTROLLER.strip_heredoc
+      class #{options[:model].pluralize.camelize}Controller < ApplicationController
+        before do
+          params.merge!(JSON.parse(request.body.read)) rescue nil if request.request_method == "POST"
+        end
+      end
+    CONTROLLER
+  end
+end
+
+def parse_options(array)
+  options = { fields: {}, force: false, help: false, model: nil, skip_model: false, skip_migration: false, skip_controller: false }
+  options[:model] = ARGV[0].strip if ARGV[0] =~ /\A[a-z0-9_]+\z/i
+  options[:force] = true if ARGV.include?('-f') || ARGV.include?('--force')
+  options[:help] = true if ARGV.include?('--help') || ARGV.include?('-h')
+  options[:skip_model] = true if ARGV.include?('--skip-model')
+  options[:skip_migration] = true if ARGV.include?('--skip-migration')
+  options[:skip_controller] = true if ARGV.include?('--skip-controller')
+  ARGV.shift
+  ARGV.each do |arg|
+    next unless arg =~ /\A[a-z0-9_]+:[a-z0-9_]+\z/i
+    k, v = arg.split(':').map(&:strip)
+    options[:fields][k] = v
+  end
+  options
+end
+
+def help
+  puts <<-HELP.strip_heredoc
+  Usage:
+    ./script/generate_resource resource_name field1:type1 field2:type2
+
+  Example:
+    ./script/generate_resource book name:string author:string released:boolean
+
+  Options:
+    -h, [--help]       # Print this help message
+    -f, [--force]      # Overwrite files that already exist
+    --skip-model       # Skip generating model file
+    --skip-migration   # Skip generating migration file
+    --skip-controller  # Skip generating controller file
+  HELP
+end
+
+if __FILE__ == $0
+  options = parse_options(ARGV)
+  if options[:help] || options[:model].blank?
+    help
+    exit
+  end
+  generate_model(options)
+  generate_migration(options)
+  generate_controller(options)
+end
