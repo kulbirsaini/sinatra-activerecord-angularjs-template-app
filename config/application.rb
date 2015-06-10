@@ -4,6 +4,7 @@ require 'sinatra/reloader'
 require 'active_support/all'
 require 'logger'
 require 'yaml'
+require 'tilt/erb'
 
 module SinatraApp
   class Application < Sinatra::Application
@@ -43,13 +44,23 @@ Dir.glob(SinatraApp::Application.models_dir.join("*.rb")).each{ |f| require f }
 module SinatraApp
   class BaseController < Sinatra::Base
     configure :development do
+      set :static, true
+      set :public_dir, SinatraApp::Application.public_dir
       register Sinatra::Reloader
       Dir.glob(SinatraApp::Application.models_dir.join("*.rb")).each{ |f| also_reload f }
+    end
+
+    configure :production do
+      set :static, false
     end
 
     before { env["rack.errors"] = SinatraApp::Application.log_file }
 
     after { ActiveRecord::Base.connection.close }
+
+    set :views, Proc.new { SinatraApp::Application.views.join(self.to_s.gsub(/Controller\z/, '').downcase) }
+    set :erb, layout_options: { views: SinatraApp::Application.views.join('layouts') }
+    set :layout, Proc.new { !request.xhr? }
   end
 
   class Base < BaseController
