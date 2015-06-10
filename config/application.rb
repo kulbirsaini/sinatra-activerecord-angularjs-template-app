@@ -4,7 +4,10 @@ require 'sinatra/reloader'
 require 'active_support/all'
 require 'logger'
 require 'yaml'
+
+# Remove template engine you don't like/want.
 require 'tilt/erb'
+require 'tilt/rdiscount'
 
 module SinatraApp
   class Application < Sinatra::Application
@@ -60,6 +63,7 @@ module SinatraApp
 
     set :views, Proc.new { SinatraApp::Application.views.join(self.to_s.gsub(/Controller\z/, '').downcase) }
     set :erb, layout_options: { views: SinatraApp::Application.views.join('layouts') }
+    set :markdown, layout_options: { views: SinatraApp::Application.views.join('layouts') }
     set :layout, Proc.new { !request.xhr? }
   end
 
