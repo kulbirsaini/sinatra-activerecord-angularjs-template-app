@@ -1,7 +1,7 @@
 require File.expand_path('../config/environment', __FILE__)
 
 def app
-  SinatraApp::Application
+  SinatraApp::Base
 end
 
-run SinatraApp::Application
+run SinatraApp::Base

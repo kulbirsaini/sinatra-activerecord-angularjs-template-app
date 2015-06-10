@@ -3,12 +3,11 @@ source 'https://rubygems.org'
 gem 'sinatra'
 # Have to force require nil otherwise Rakefile wont work
 gem 'sinatra-contrib', require: false
-# Ruby facets for additional functionality
-gem 'facets', require: false
 # Replace with DB of your choice
 gem 'sqlite3'
 # ActiveRecord from rails
 gem 'activerecord', require: 'active_record'
+gem 'activesupport', require: false
 # For rendering awesome JSON
 gem 'jbuilder'
 # Rake tasks

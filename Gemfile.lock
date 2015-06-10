@@ -30,7 +30,6 @@ GEM
     colorize (0.7.7)
     daemons (1.2.2)
     eventmachine (1.0.7)
-    facets (3.0.0)
     hirb (0.7.3)
     i18n (0.7.0)
     jbuilder (2.2.16)
@@ -80,10 +79,10 @@ PLATFORMS
 
 DEPENDENCIES
   activerecord
+  activesupport
   capistrano
   capistrano-bundler
   capistrano-rvm
-  facets
   hirb
   jbuilder
   rake

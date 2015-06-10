@@ -1,13 +1,13 @@
 require File.expand_path('../boot', __FILE__)
 require 'sinatra/base'
-require 'facets/class/cattr'
-require 'facets/kernel/blank'
-require 'facets/hash/symbolize_keys'
+require 'sinatra/reloader'
+require 'active_support/all'
+require 'logger'
 require 'yaml'
 
 module SinatraApp
   class Application < Sinatra::Application
-    cattr_accessor :connection_info, :migrations_dir, :groups, :models_dir, :controllers_dir, :lib_dir
+    cattr_accessor :connection_info, :migrations_dir, :groups, :models_dir, :controllers_dir, :lib_dir, :log_dir, :log_filepath, :log_file, :logger
 
     Sinatra::Application.environment = ENV['APP_ENV'].present? ? ENV['APP_ENV'].to_sym : :development
     Sinatra::Application.root =  Pathname.new(File.dirname(File.expand_path('../', __FILE__)))
@@ -18,7 +18,14 @@ module SinatraApp
     @@models_dir = root.join('app/models')
     @@controllers_dir = root.join('app/controllers')
     @@lib_dir = root.join('lib')
+    @@log_dir = root.join('log')
+    @@log_filepath = log_dir.join("#{environment}.log")
     @@groups = [ :default ] << environment
+
+    @@log_file = File.new(log_filepath, 'a+')
+    log_file.sync = true
+    @@logger = Logger.new(log_filepath)
+
 
     def initialize(options = {})
       super
@@ -28,11 +35,30 @@ module SinatraApp
 end
 
 Bundler.require(*SinatraApp::Application.groups)
-require 'sinatra/reloader'
 
 Dir.glob(SinatraApp::Application.lib_dir.join('*.rb')).each{ |f| require f }
 Dir.glob(SinatraApp::Application.lib_dir.join('tasks/*.rake')).each{ |f| import f }
 Dir.glob(SinatraApp::Application.models_dir.join("*.rb")).each{ |f| require f }
-controller_filenames = Dir.glob(SinatraApp::Application.controllers_dir.join("*.rb")).sort
-controller_filenames.each { |f| require f }
-controller_filenames.each { |f| f = File.basename(f); use eval(f.gsub(/#{File.extname(f)}\z/, '').classify) }
+
+module SinatraApp
+  class BaseController < Sinatra::Base
+    configure :development do
+      register Sinatra::Reloader
+      Dir.glob(SinatraApp::Application.models_dir.join("*.rb")).each{ |f| also_reload f }
+    end
+
+    before { env["rack.errors"] = SinatraApp::Application.log_file }
+
+    after { ActiveRecord::Base.connection.close }
+  end
+
+  class Base < BaseController
+    configure do
+      use Rack::CommonLogger, SinatraApp::Application.logger
+    end
+
+    controller_filenames = Dir.glob(SinatraApp::Application.controllers_dir.join("*.rb")).sort
+    controller_filenames.each { |f| require f }
+    controller_filenames.each { |f| f = File.basename(f); use eval(f.gsub(/#{File.extname(f)}\z/, '').classify) }
+  end
+end
