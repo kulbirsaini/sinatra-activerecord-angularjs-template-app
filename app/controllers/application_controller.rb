@@ -1,5 +1,6 @@
 class ApplicationController < SinatraApp::BaseController
   before do
+    request.body.rewind # In case someone already read it
     params.merge!(JSON.parse(request.body.read)) rescue nil if request.request_method == "POST"
     if settings.cors_api
       headers \
