@@ -14,6 +14,6 @@ class ApplicationController < SinatraApp::BaseController
   end
 
   get '/' do
-    markdown File.read(SinatraApp::Application.root.join('Readme.md'))
+    markdown :"#{SinatraApp::Application.root.join('Readme').to_s}", views: ''
   end
 end
