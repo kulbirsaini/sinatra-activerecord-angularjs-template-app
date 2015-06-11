@@ -5,7 +5,31 @@
 
 ## Sinatra Configuration
 
-* Database config file: [`config/database.yml`](https://github.com/kulbirsaini/sinatra-activerecord-angularjs-template-app/blob/master/config/database.yml)
+###### App Config File [`config/sinatra_app.yml`](https://github.com/kulbirsaini/sinatra-activerecord-angularjs-template-app/blob/master/config/sinatra_app.yml)
+
+```ruby
+default: &default # All paths are relative to SinatraApp::Application.root
+  models_dir: 'app/models'
+  controllers_dir: 'app/controllers'
+  views_dir: 'app/views'
+  lib_dir: 'lib'
+  db_dir: 'db'
+  log_dir: 'log'
+  public_dir: 'public'
+  database_config: 'config/database.yml'
+  enable_cors_api: false
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default
+```
+
+###### Database Config File [`config/database.yml`](https://github.com/kulbirsaini/sinatra-activerecord-angularjs-template-app/blob/master/config/database.yml)
 
 ```ruby
 default: &default
@@ -26,10 +50,12 @@ production:
   database: db/production.sqlite3
 ```
 
-* Setting environment
+###### Setting Environment
+
+Default: `development`
 
 ```bash
-export APP_ENV=production
+export RACK_ENV=production
 ```
 
 ## Rake Tasks
@@ -220,7 +246,7 @@ set :application, 'myapp.example.com'
 set :rvm_type, :user
 set :rvm_ruby_version, '2.2.2'
 set :stage, :production
-set :default_env, { 'APP_ENV': 'production' }
+set :default_env, { 'RACK_ENV': 'production' }
 role :web, "#{fetch(:application)}"
 role :app, "#{fetch(:application)}"
 role :db,  "#{fetch(:application)}", :primary => true

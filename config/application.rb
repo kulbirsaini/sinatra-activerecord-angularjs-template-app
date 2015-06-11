@@ -11,20 +11,26 @@ require 'tilt/rdiscount'
 
 module SinatraApp
   class Application < Sinatra::Application
-    cattr_accessor :connection_info, :migrations_dir, :groups, :models_dir, :controllers_dir, :lib_dir, :log_dir, :log_filepath, :log_file, :logger
+    cattr_accessor :connection_info, :db_dir, :migrations_dir, :groups, :models_dir, :controllers_dir, :lib_dir, :log_dir, :log_filepath, :log_file, :logger, :cors_api
 
-    Sinatra::Application.environment = ENV['APP_ENV'].present? ? ENV['APP_ENV'].to_sym : :development
+    Sinatra::Application.environment = ENV['RACK_ENV'].present? ? ENV['RACK_ENV'].to_sym : :development
     Sinatra::Application.root =  Pathname.new(File.dirname(File.expand_path('../', __FILE__)))
-    Sinatra::Application.views = root.join('app/views')
-    Sinatra::Application.public_dir = root.join('public')
-    @@connection_info =  YAML::load(File.open(root.join('config/database.yml'))).symbolize_keys
-    @@migrations_dir = root.join('db/migrate')
-    @@models_dir = root.join('app/models')
-    @@controllers_dir = root.join('app/controllers')
-    @@lib_dir = root.join('lib')
-    @@log_dir = root.join('log')
+
+    env_config_file = ENV['SINATRA_CONFIG'] || 'config/sinatra_app.yml'
+    env_config = YAML::load(open(root.join(env_config_file)).read).symbolize_keys[environment].symbolize_keys
+
+    Sinatra::Application.views = root.join(env_config[:views_dir])
+    Sinatra::Application.public_dir = root.join(env_config[:public_dir])
+    @@connection_info =  YAML::load(File.open(root.join(env_config[:database_config]))).symbolize_keys
+    @@db_dir = root.join(env_config[:db_dir])
+    @@migrations_dir = db_dir.join('migrate')
+    @@models_dir = root.join(env_config[:models_dir])
+    @@controllers_dir = root.join(env_config[:controllers_dir])
+    @@lib_dir = root.join(env_config[:lib_dir])
+    @@log_dir = root.join(env_config[:log_dir])
     @@log_filepath = log_dir.join("#{environment}.log")
     @@groups = [ :default ] << environment
+    @@cors_api = !!env_config[:enable_cors_api]
 
     @@log_file = File.new(log_filepath, 'a+')
     log_file.sync = true
@@ -65,6 +71,7 @@ module SinatraApp
     set :erb, layout_options: { views: SinatraApp::Application.views.join('layouts') }
     set :markdown, layout_options: { views: SinatraApp::Application.views.join('layouts') }
     set :layout, Proc.new { !request.xhr? }
+    set :cors_api, SinatraApp::Application.cors_api
   end
 
   class Base < BaseController

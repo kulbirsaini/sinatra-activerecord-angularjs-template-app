@@ -1,0 +1,19 @@
+default: &default # All paths are relative to SinatraApp::Application.root
+  models_dir: 'app/models'
+  controllers_dir: 'app/controllers'
+  views_dir: 'app/views'
+  lib_dir: 'lib'
+  db_dir: 'db'
+  log_dir: 'log'
+  public_dir: 'public'
+  database_config: 'config/database.yml'
+  enable_cors_api: false
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+
+production:
+  <<: *default

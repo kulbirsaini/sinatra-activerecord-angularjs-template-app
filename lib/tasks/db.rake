@@ -12,7 +12,7 @@ namespace :db do
 
   desc 'Seed database'
   task :seed => [ :connect ] do
-    seed_file = SinatraApp::Application.root.join('db/seed.rb')
+    seed_file = SinatraApp::Application.db_dir.join('seed.rb')
     require seed_file if File.exists?(seed_file)
   end
 
