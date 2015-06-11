@@ -96,6 +96,16 @@ $ grunt cssmin
 $ grunt copy
 ```
 
+###### Validate all JavaScript files with [JsHint](http://jshint.com/)
+
+```bash
+$ grunt jshint
+Running "jshint:all" (jshint) task
+>> 5 files lint free.
+
+Done, without errors.
+```
+
 ###### Minify all JS files to `public/assets/minjs/application.min.js`
 
 ```bash
@@ -111,17 +121,20 @@ $ grunt watch
 ###### Do all the above tasks
 
 ```bash
-$ grunt
-Running "copy:main" (copy) task
-Copied 5 files
+Running "newer:copy:main" (newer) task
+No newer files to process.
 
-Running "sass:dist" (sass) task
+Running "newer:sass:dist" (newer) task
+No newer files to process.
 
-Running "cssmin:dist" (cssmin) task
->> 1 file created. 280.81 kB → 138.29 kB
+Running "newer:cssmin:dist" (newer) task
+No newer files to process.
 
-Running "uglify:js" (uglify) task
->> 1 file created.
+Running "newer:jshint:all" (newer) task
+No newer files to process.
+
+Running "newer:uglify:js" (newer) task
+No newer files to process.
 
 Running "watch" task
 Waiting...

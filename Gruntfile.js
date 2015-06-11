@@ -44,6 +44,11 @@ module.exports = function(grunt){
         }]
       },
     },
+    jshint: {
+      all: {
+        src: [ 'Gruntfile.js', '<%= project.js %>/*.js' ]
+      }
+    },
     uglify: {
       options: {
         mangle: 'sort',
@@ -55,17 +60,25 @@ module.exports = function(grunt){
       }
     },
     watch: {
+      copy: {
+        files: ['<%= project.components %>/bootstrap-sass/assets/fonts/bootstrap/*.*'],
+        tasks: ['newer:copy:main']
+      },
       sass: {
         files: '<%= project.scss %>/*.scss',
-        tasks: ['sass']
+        tasks: ['newer:sass:dist']
       },
       css: {
         files: ['<%= project.css %>/*.css', '!<%= project.css %>/*.min.css'],
-        tasks: ['cssmin']
+        tasks: ['newer:cssmin:dist']
+      },
+      jshint: {
+        files: ['Gruntfile.js', '<%= project.js %>/*.js'],
+        tasks: ['newer:jshint:all']
       },
       js: {
         files: '<%= project.js %>/*.js',
-        tasks: ['uglify']
+        tasks: ['newer:uglify:js']
       }
     }
   });
@@ -73,6 +86,8 @@ module.exports = function(grunt){
   grunt.loadNpmTasks('grunt-contrib-sass');
   grunt.loadNpmTasks('grunt-contrib-cssmin');
   grunt.loadNpmTasks('grunt-contrib-uglify');
+  grunt.loadNpmTasks('grunt-contrib-jshint');
+  grunt.loadNpmTasks('grunt-newer');
   grunt.loadNpmTasks('grunt-contrib-watch');
-  grunt.registerTask('default',['copy', 'sass', 'cssmin', 'uglify', 'watch']);
-}
+  grunt.registerTask('default',['newer:copy:main', 'newer:sass:dist', 'newer:cssmin:dist', 'newer:jshint:all', 'newer:uglify:js', 'watch']);
+};
