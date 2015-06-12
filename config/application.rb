@@ -132,7 +132,7 @@ module SinatraApp
 
     set :views, Proc.new { get_views_for_controller(self) }
     set :erb, layout_options: { views: Proc.new { get_layouts } }
-    set :markdown, layout_options: { views: SinatraApp::Application.views.join('layouts') }
+    set :markdown, layout_options: { views: Proc.new { get_layouts } }
     set :layout, Proc.new { !request.xhr? }
     set :cors_api, SinatraApp::Application.cors_api
 
