@@ -8,6 +8,8 @@ default: &default # All paths are relative to SinatraApp::Application.root
   public_dir: 'public'
   database_config: 'config/database.yml'
   enable_cors_api: false
+  enable_api_routing: true
+  supported_apis: { 'v1': { path_prefix: '/', definition: 'api/v1', default: true }, 'v201502': { path_prefix: '/api', definition: 'api201502' } }
 
 development:
   <<: *default
