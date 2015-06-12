@@ -2,6 +2,7 @@ default: &default # All paths are relative to SinatraApp::Application.root
   models_dir: 'app/models'
   controllers_dir: 'app/controllers'
   views_dir: 'app/views'
+  layouts_dir_name: 'layouts' # Will be placed as app/views/layouts or app/views/api/v1/layouts
   lib_dir: 'lib'
   db_dir: 'db'
   log_dir: 'log'
@@ -9,8 +10,20 @@ default: &default # All paths are relative to SinatraApp::Application.root
   database_config: 'config/database.yml'
   enable_cors_api: false
   enable_api_routing: false
-  #Example: { 'v1': { path_prefix: '/', definition: 'api/v1', default: true }, 'v201502': { path_prefix: '/api', definition: 'api201502' } }
-  supported_apis: {}
+  #Example:
+  #supported_apis:
+  #  v1:
+  #    path_prefix: '/api'
+  #    controllers: 'api/v1' # Define controllers in app/controllers/api/v1/
+  #    models: 'api/v1' # Define models in app/models/api/v1/
+  #    views: 'api/v1' # Define views in app/views/api/v1/
+  #    default: true
+  #  v201502:
+  #    path_prefix: '/api'
+  #    controllers: 'api201502'
+  #    models: 'api201502'
+  #    views: 'api201502'
+  supported_apis:
 
 development:
   <<: *default
